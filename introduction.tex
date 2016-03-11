@@ -1,0 +1,157 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{CambridgeUS}
+\begin{document}
+
+\title{Robot-Poet-Warlord: An Introduction}
+\subtitle{CSCI1301: Computer Science I}
+\author{Patrick Simmons}
+\institute{Georgia College}
+\date{\today}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{The Game}
+  \begin{itemize}
+  \item Your code manages a team of robots.
+  \item The goal of this team is to defeat all other teams of robots
+    by destroying all enemy robots.
+  \item The environment your robots operate in is a 2D grid,
+    represented in the API as a 2D array.
+  \item You can't see the entire 2D grid unless you use your radio to
+    get a copy of it each turn.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The Rules}
+  \begin{itemize}
+  \item Your robots get 20 skill points apiece when created by the
+    simulator, but you shouldn't assume this since you can create
+    robots yourself; the createRobot method you implement tells you
+    how many skill points you get with a parameter.
+  \item Your code chooses how to distribute these skill points when
+    your robot is created.
+  \item The simulator will give your robots unique ID numbers.  You
+    can use these to create different robot types at the creation of
+    the world (with the \% operator).
+  \item You could also use the Random class, of course.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Skills}
+  \begin{itemize}
+  \item Attack, Defense, Power, Charge
+  \item Attack: base chance of hitting, limit to how much power you
+    can put into a single attack
+  \item Defense: base chance of resisting attack, limit to how much
+    power you can put into defense
+  \item Power: maximum power you can use for any number of actions
+    in a turn
+  \item Charge: how much power you ``regenerate'' each turn.  Also,
+    10 times your charge skill is your maximum charge, and also your
+    maximum health.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Combat (from attacker's perspective)}
+  \begin{itemize}
+  \item Melee: Your Attack Skill + Power you put into attack is your
+    ``modified attack skill''.
+  \item Ranged: (1/2 your attack skill) + Power you put into attack is
+    your ``modified attack skill''.
+  \item Capsule: separate rules
+  \item Defense: Their Defense skill + power they put into defense
+    last turn is their ``modified defense skill''.
+  \item Chance of attack hitting is 50\% + (Your modified attack
+    skill - their modified defense skill) * 10
+  \item Damage of attack if hit: \textbf{power you put into attack}\\
+    So, it's important to have a highish power skill just for
+    attacking, but remember you can't put any more power into an
+    attack than your attack skill.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Looking Around}
+  \begin{itemize}
+  \item getVisibleNeighborhood(): gives you the portion of the world
+    you can see.  You can see a number of squares equal to your
+    defense skill in front of you, in back of you, and to your right
+    and left.  This cross is then circumscribed with a square, so
+    your visible area is a square 2*(defense skill)+1 squares
+    centered on you.
+  \item If you're near the edge of the world, the visible
+    neighborhood will not include anything past the edge of the
+    world, so getVisibleNeighborhood() will return a smaller
+    rectangle.
+  \item getWorld(): spend 3 power to get a copy of the entire world
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Moving Around: Self Explanatory}
+  \begin{itemize}
+  \item move(int steps, Direction way)
+  \item pick\_up\_capsule(GridCell adjacent\_cell)
+  \item drop\_capsule(GridCell adjacent\_cell, int power\_of\_capsule)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Moving Around: This Is Important}
+  \begin{itemize}
+  \item I wrote three methods for you to use for pathfinding.
+  \item public static GridCell findNearestAlly()
+  \item public static GridCell[] findShortestPath()
+  \item private static GridCell[] findShortestPathInternal()
+  \item The arguments to these methods are described in the
+    documentation.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Pathfinding}
+  \begin{itemize}
+  \item findShortestPathInternal() implements Dijkstra's algorithm for
+    pathfinding.
+  \item This algorithm and similar ones are covered later in the CS
+    major sequence; for now, you can just know that this gives you the
+    shortest path from A to B, where you choose A and B.
+  \item The exact API for the non-private methods is described in the
+    documentation.
+  \item I \emph{strongly encourage} you to use these methods instead
+    of trying to implement your own code to figure out whether it is
+    possible for you to get to a particular square, and, if so, what
+    the shortest path is.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Construction}
+  \begin{itemize}
+  \item Can construct capsules, walls, forts, and robots.
+  \item If you begin constructing a wall, fort, or robot, you need to
+    specify an empty cell to construct in.  That cell then becomes
+    ``blocked'', and no one can move onto it unless the robot doing
+    the construction is killed.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Radio}
+  \begin{itemize}
+  \item Each message costs 1 power to send to nearest neighbor, or 2
+    to send to all allies.
+  \item The messages are each an array of 64 bytes.  What you do with
+    those 64 bytes is entirely up to you.
+  \item If you're going to use the radio, you should probably define a
+    ``protocol'', where each robot identifies who it is some way
+    (perhaps by position) in the message.  No ID of the sender is
+    included, though you are guaranteed only to receive messages from
+    allies.
+  \item You never receive messages that you yourself send.
+  \item Radio also allows you to scan a visible enemy and discover its
+    statistics within your ``visible range'' and to get a copy of the
+    world map.
+  \item The scanning also works on allies if you want to use it for
+    some reason.
+  \end{itemize}
+\end{frame}
+    
+
+\end{document}

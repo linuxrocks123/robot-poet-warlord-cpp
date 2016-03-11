@@ -1,0 +1,105 @@
+Robot gets 20 "skill points" at creation to divide however he wants.
+"Creator" can send a message to robot at birth for free, which could
+suggest a division.
+
+Primary Attributes:
+- Attack (0-10)
+- Defense (0-10)
+- Power (0-10)
+- Health/Charge (0-10)
+
+Each turn:
+- Robot has maximum HP of 10*charge skill.
+- Robot gains power equal to charge skill each turn.
+- Each turn, robot can use up to power skill points each turn to do
+  any combination of activities.
+
+Attacks:
+- Melee: 50% + (Attack - Defense) chance of hitting
+         Amount of power put into attack determines damage and
+         increases chance of hit.
+         Can't put more power into attack than attack skill.
+         Damage if hit: equal to power put into attack
+         Chance of hitting:
+           attack skill + 0.5*(power put into attack)
+- Ranged: Only 50% of attack skill is used, but putting power into
+          attack increases chance as normal.
+          Range is number of tiles equal to defense level.
+- Use ranged energy capsule:
+  - No power needed to use.
+  - Can only be done if your attack+defense, when added, is equal to
+    or greater than the power of the capsule.
+  - Damage done is (0.1 * power of capsule * attack level), rounded
+    down.
+  - Range is (power of capsule + defense level).  No ranged penalty.
+  - Attack skill is (power of capsule + attack level).
+  - Can only hold a number of capsules equal to (attack+defense).
+- Destroy wall/fortification: Wall has 10 health and 10 defense.  Can
+  use any method to destroy wall/fortification (melee, ranged,
+  capsule).
+
+Defense:
+- Defend: Amount of power put into defense determines temporary
+          increase of defense points.  Can simultaneously defend and
+          attack if power is high enough.  Can't put more power into
+          defense than defense skill.
+
+Move:
+- Moving one hex takes 1 power.
+- Turning is free (no orientation).
+- Can see (defense level) hexes in every direction.  Can see
+  whether other robots are allies or enemies.  Only way to see
+  further is to use 3 power to see the world map.
+- Picking up capsule takes 1 power.
+- Dropping capsule at adjacent square (for ally to pick up) is free.
+
+Build:
+- Build wall: Takes 50 power, cannot be interrupted
+- Build fortification: Takes 75 power, cannot be interrupted
+- Build energy capsule: takes 10*(power of resulting capsule) power.
+  Okay to interrupt.  Can only "hold" (attack+defense) at a time.
+- Build robot: Takes (20*total skill of robot) power, cannot be
+  interrupted.  Max skill points are 40
+- Repair (self or other adjacent robot): 2 power repairs 1 hp damage
+- Charge (adjacent robot): 1 power gives 1 charge to adjacent robot
+
+Radio:
+  - Messages limited to 64 bytes
+  - Can send as many radio signals each turn as you want
+    (limited by power) 
+  - Reception is free
+  - Radio messages don't include ID of robot who sent it; must include
+    that in the message if it's important
+  - Can't send messages to enemies
+  - 1 Power to send radio to nearest neighbor
+  - 2 Power to send radio to all allies
+  - 3 Power to get a copy of the world map with locations of all
+    allies and enemies included.  No IDs of robots included except ID
+    of robot sending the message.  Receive copy current turn.
+  - 1 Power to scan visible enemy.  Range is equal to defense skill.
+    Can't be jammed.
+
+NOTE: JAMMING NOT IMPLEMENTED
+*******
+Jamming:
+  - 1 power to jam at 1 power.
+  - 1 power to to overcome jamming at 1 power.
+  - Jamming affects allies AND enemies.
+  - Jamming lasts until the beginning of your next turn.
+  - Jamming range is:
+    - 1 Power: 5 hexes at 1 power
+    - 2 Power: 6 hexes at 2 power, another 3 at 1
+    - 3 Power: 7 hexes at 3 power, another 3 at 2, another 1 at 1
+    - 4 Power: 8 hexes at 4 power, another 4 at 3, another 2 at 2,
+               another 1 at 1
+    - 5 Power: 9 hexes at 5 power, another 4 at 4, another 2 at 3,
+               another 1 at 2, another 1 at 1
+    - Can't jam at more than 5 power.
+  - Can't tell if you're being jammed unless you try to get copy of
+    the world and it doesn't work.
+  - "All allies" messages downgrade to "nearest neighbor" in presence
+    of jamming at 1 power.
+  - Jamming of a message is equal to the greater of jamming at sending
+    tile and jamming at receiving tile.
+  - Receiver and sender can both spend extra power to try and overcome
+    jamming.

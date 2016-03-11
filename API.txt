@@ -1,0 +1,78 @@
+For students:
+
+Structures:
+
+class Robot_Specs
+{
+   public int attack;
+   public int defense;
+   public int power;
+   public int charge;
+}
+
+class Robot_Status
+{
+   public int charge;
+   public int health;
+   int[] capsules;
+}
+
+enum GridObject { EMPTY, SELF, ALLY, ENEMY, WALL, FORT, CAPSULE };
+
+class GridCell
+{
+   public int x_coord;
+   public int y_coord;
+   GridObject contents;
+   Direction fort_orientation;
+}
+
+enum AttackType { MELEE, RANGED, CAPSULE };
+
+class AttackNotice
+{
+   GridCell origin;
+   AttackType form;
+   int damage;
+}
+
+enum Direction { UP, DOWN, LEFT, RIGHT };
+
+enum BuildStatus { WALL, FORT, CAPSULE, ROBOT };
+
+- Must implement Robot interface.
+- Entry point at creation is
+  Robot_Specs createRobot(WorldAPI api, int skill_points, byte[] message)
+- Entry point for each turn is
+  void act(WorldAPI api, Robot_Status status, byte[][] received_radio,
+           int[] capsules_held, GridCell[][] adjacent,
+           AttackNotice[] attacks)
+
+Functions available in WorldAPI:
+
+Movement:
+- int meleeAttack(int power, GridCell adjacent_cell)
+- int rangedAttack(int power, GridCell nonadjacent_cell)
+- int capsuleAttack(int power_of_capsule, GridCell cell)
+- void defend(int power)
+- void move(int steps, Direction way)
+- void pick_up_capsule(GridCell adjacent_cell);
+- void drop_capsule(GridCell adjacent_cell, int power_of_capsule);
+
+Build:
+- BuildStatus getBuildStatus()
+- GridCell getBuildTarget()
+- int getInvestedBuildPower()
+- void setBuildTarget(BuildStatus status, GridCell location)
+- void build(int power)
+- void sendCreationNotice(byte[] message)
+- void repair(int power)
+- void charge(int power, GridCell ally)
+
+Radio:
+- byte[][] getMessages(int power)
+- void sendMessage(byte[] message, int power)
+- GridCell[][] getWorld(int power) //can return null if radio jammed
+- void scanEnemy(Robot_Specs enemySpecs, Robot_Status enemyStatus,
+                 GridCell toScan)
+- void jamRadio(int power)
